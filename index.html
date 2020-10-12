@@ -88,76 +88,103 @@
   
   
     <!-- message box -->
-    <div id="message-box" class="container is-visible">
-      <div class="row">
-        <div class="form-group">
-          <hr>
-          <p id="message"></p>
-        </div>
+  <div id="message-box" class="container is-visible">
+    <div class="row">
+      <div class="form-group">
+        <hr>
+        <p id="message"></p>
       </div>
     </div>
-    
-  
-  
-  
-    <!-- finish page -->
-    <div id="question-five" class="container is-visible">
-      <h1>Thanks for your times</h1>
-      <p>Here is your score</p>
-      <form>
-        <div class="form-group row">
-          <label for="staticEmail" class="col-sm-2 col-form-label">Score</label>
-          <div class="col-sm-10">
-            <input type="number" class="form-control-plaintext" id="score" value="">
-          </div>
+  </div>
+
+
+
+
+  <!-- finish page -->
+  <div id="score-page" class="container is-visible">
+    <h1>Thanks for your times</h1>
+    <p>Here is your score</p>
+    <form>
+      <div class="form-group row">
+        <label for="scores-right" class="col-sm-2 col-form-label">Right Answers</label>
+        <div class="col-sm-10">
+          <input type="number" class="form-control-plaintext" id="scores-right" value="">
         </div>
-    </div>
-  
-    <style>
-      .is-visible {
-        visibility: hidden;
-        display: none;
+      </div>
+      <div class="form-group row">
+        <label for="scores-wrong" class="col-sm-2 col-form-label">Wrong Answers</label>
+        <div class="col-sm-10">
+          <input type="number" class="form-control-plaintext" id="scores-wrong" value="">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <style>
+    .is-visible {
+      visibility: hidden;
+      display: none;
+    }
+  </style>
+
+  <script src="js/index.js"></script>
+  <script>
+    var rightAnswers = 0;
+    var wrongAnswers = 0;
+
+    computeAnswer = (message, isRight) => {
+      if (isRight) {
+        ++rightAnswers
+        console.log('right answers', rightAnswers)
+      } else {
+        ++wrongAnswers
+        console.log('wrong answers', wrongAnswers)
       }
-    </style>
-  
-     <script src="js/index.js"></script>
-    <script>
-      var rightAnswers = 0;
-      var wrongAnswers = 0;
-  
-      $("#continue").click(() => {
-        $("#question-one").removeClass("is-visible")
-        $(".right").click(() => {
-          ++rightAnswers
-          $("#question-two").removeClass("is-visible")
-          $('#question-one').addClass("is-visible")
-          $('#message-box').removeClass("is-visible")
-          $('#message').html('<strong>Right</strong>')
-          setTimeout(()=> {
-            $('#message-box').addClass("is-visible")
-            $('#message').html('')
-          }, 3000)
-        })
-        $(".wrong").click(() => {
-          ++wrongAnswers
-          $("#question-two").removeClass("is-visible")
-          $('#question-one').addClass("is-visible")
-          $('#message-box').removeClass("is-visible")
-          $('#message').html('<strong>Wrong</strong>')
-          setTimeout(()=> {
-            $('#message-box').addClass("is-visible")
-            $('#message').html('')
-          }, 3000)
-          
-          console.log("wrongAnswer",wrongAnswers)
-  
-        })
-      })
-  
-  
-  
-  
-    </script>
-  </body>
-  
-  </html>
+
+      $('#message-box').removeClass("is-visible")
+      $('#message').html(`<strong>${message}</strong>`)
+      setTimeout(() => {
+        $('#message-box').addClass("is-visible")
+        $('#message').html('')
+      }, 3000)
+    }
+
+    $("#continue").click(() => {
+      $("#question-one").removeClass("is-visible")
+    })
+
+    let currentPage = 0
+    let pages = ['question-one', 'question-two', 'question-three', 'question-four', 'question-five']
+    const nextPage = () => {
+      ++currentPage
+
+      if (currentPage == pages.length) {
+        current = pages[pages.length - 1]
+        $(`#${current}`).addClass("is-visible")
+        $('#score-page').removeClass("is-visible")
+        $('#scores-right').val(rightAnswers)
+        $('#scores-wrong').val(wrongAnswers)
+      } else {
+        current = pages[pages.length - 1]
+        prev = pages[currentPage - 1]
+        $(`#${current}`).removeClass("is-visible")
+        $(`#${prev}`).addClass("is-visible")
+      }
+    }
+
+    $(".right").click(() => {
+      computeAnswer("Right", true)
+      nextPage()
+    })
+    $(".wrong").click(() => {
+      computeAnswer("Wrong", false)
+      nextPage()
+    })
+
+
+
+
+  </script>
+</body>
+
+</html>
